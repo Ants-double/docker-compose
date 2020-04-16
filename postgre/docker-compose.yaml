@@ -4,14 +4,16 @@ services:
   postgres:
     container_name: postgres_container
     image: postgres
+    privileged: true
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-456123}
-      PGDATA: /data/postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=456123
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=postgres
     volumes:
-       - postgres:/data/postgres
+       - ./postdata:/var/lib/postgresql
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
       - postgres
     restart: unless-stopped
