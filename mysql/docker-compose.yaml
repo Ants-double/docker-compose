@@ -14,7 +14,8 @@ services:
         --explicit_defaults_for_timestamp=true
         --lower_case_table_names=1
         --default-time-zone=+8:00
-        --wait_timeout=1814400
+        --skip-name-resolve
+        --wait_timeout=28800
       ports: 
         - 3309:3306
       volumes: 
