@@ -1,0 +1,24 @@
+version: '3.1'
+services: 
+    spider_weather_data_beijing:
+       build: 
+         context: ./../spider_weather_data
+         dockerfile: orchiddockerfile
+       image: spider_weather_data_beijing
+       container_name: spider_weather_data_beijing       
+       networks: 
+         - nets
+       volumes: 
+         - /etc/localtime:/etc/localtime
+         - ./spider_weather_data_beijing.log:/usr/src/myapp/contentspider.log
+       ports: 
+         - 9090:9089
+       environment: 
+         - SET_CONTAINER_TIMEZONE=true
+         - CONTAINER_TIMEZONE=Asia/Shanghai
+         - JAVA_OPTS=-Xmx256M -Dspring.profiles.active=test -Duser.timezone=GMT+08
+   
+networks: 
+    nets:   
+      external: false    
+

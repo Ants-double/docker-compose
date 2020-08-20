@@ -1,0 +1,7 @@
+FROM java:8u111
+LABEL create=lyy
+RUN echo "Asia/Shanghai" > /etc/timezone
+COPY airqualityforecast-service-data-spider-1.0.0-SNAPSHOT.jar /usr/src/myapp/spider_weather_data_beijing.jar
+WORKDIR /usr/src/myapp
+EXPOSE 9089
+CMD java -jar  /usr/src/myapp/spider_weather_data_beijing.jar --spider.city=北京
