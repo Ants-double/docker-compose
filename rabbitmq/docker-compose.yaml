@@ -15,8 +15,8 @@ services:
     #挂载
     volumes:
       - ./data:/var/lib/rabbitmq
-      - ./logs:/var/lib/rabbitmq
-      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+     # - ./logs:/var/lib/rabbitmq
+     # - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
     #环境变量
     environment:
       - RABBITMQ_DEFAULT_VHOST=my_vhost
