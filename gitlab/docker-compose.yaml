@@ -4,10 +4,10 @@ services:
       image: 'gitlab/gitlab-ce:latest'
       container_name: gitlab
       restart: always
-      hostname: '192.168.124.25'
+      hostname: '119.45.7.127'
       environment:
         GITLAB_OMNIBUS_CONFIG: |
-          external_url 'http://192.168.124.25:8929'
+          external_url 'http://119.45.7.127:8929'
           gitlab_rails['gitlab_shell_ssh_port'] = 2224
          
       ports:

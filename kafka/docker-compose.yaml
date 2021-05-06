@@ -1,0 +1,172 @@
+version: '2'
+
+services:
+
+  zoo1:
+    image: zookeeper # 镜像
+    restart: always # 重启
+    container_name: zoo1
+    hostname: zoo1
+    ports:
+    - "2181:2181"
+    volumes:
+    - "./zooConfig/zoo.cfg:/conf/zoo.cfg" # 配置
+    - "/home/ants/dev/zk/zookeeper1/data:/data"
+    - "/home/ants/dev/zk/zookeeper1/datalog:/datalog"
+    environment:
+      ZOO_MY_ID: 1 # id
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      default:
+        ipv4_address: 172.23.0.11
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    container_name: zoo2
+    hostname: zoo2
+    ports:
+    - "2182:2181"
+    volumes:
+    - "./zooConfig/zoo.cfg:/conf/zoo.cfg"
+    - "/home/ants/dev/zk/zookeeper2/data:/data"
+    - "/home/ants/dev/zk/zookeeper2/datalog:/datalog"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      default:
+        ipv4_address: 172.23.0.12
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    container_name: zoo3
+    hostname: zoo3
+    ports:
+    - "2183:2181"
+    volumes:
+    - "./zooConfig/zoo.cfg:/conf/zoo.cfg"
+    - "/home/ants/dev/zk/zookeeper3/data:/data"
+    - "/home/ants/dev/zk/zookeeper3/datalog:/datalog"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      default:
+        ipv4_address: 172.23.0.13
+
+  kafka1:
+    image: wurstmeister/kafka # 镜像
+    restart: always
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+    - 9092:9092
+    # - 9988:9988
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.15.207:9092 # 暴露在外的地址
+      KAFKA_ADVERTISED_HOST_NAME: kafka1 # 
+      KAFKA_HOST_NAME: kafka1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_ADVERTISED_PORT: 9092 # 暴露在外的端口
+      KAFKA_BROKER_ID: 0 # 
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    #  JMX_PORT: 9988 # jmx
+    volumes:
+    - /etc/localtime:/etc/localtime
+    - "/home/ants/dev/mq/kafka1/logs:/kafka"
+    links:
+    - zoo1
+    - zoo2
+    - zoo3
+    networks:
+      default:
+        ipv4_address: 172.23.0.14
+
+  kafka2:
+    image: wurstmeister/kafka
+    restart: always
+    container_name: kafka2
+    hostname: kafka2
+    ports:
+    - 9093:9093
+   # - 9998:9998
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.15.207:9093
+      KAFKA_ADVERTISED_HOST_NAME: kafka2
+      KAFKA_HOST_NAME: kafka2
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_ADVERTISED_PORT: 9093
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+     # JMX_PORT: 9998
+    volumes:
+    - /etc/localtime:/etc/localtime
+    - "/home/ants/dev/mq/kafka2/logs:/kafka"
+    links:
+    - zoo1
+    - zoo2
+    - zoo3
+    networks:
+      default:
+        ipv4_address: 172.23.0.15
+
+  kafka3:
+    image: wurstmeister/kafka
+    restart: always
+    container_name: kafka3
+    hostname: kafka3
+    ports:
+    - 9094:9094
+   # - 9997:9997
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.15.207:9094
+      KAFKA_ADVERTISED_HOST_NAME: kafka3
+      KAFKA_HOST_NAME: kafka3
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_ADVERTISED_PORT: 9094
+      KAFKA_BROKER_ID: 2
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094
+      #JMX_PORT: 9997
+    volumes:
+    - /etc/localtime:/etc/localtime
+    - "/home/ants/dev/mq/kafka3/logs:/kafka"
+    links:
+    - zoo1
+    - zoo2
+    - zoo3
+    networks:
+      default:
+        ipv4_address: 172.23.0.16
+
+  kafka-manager:
+    image: hlebalbau/kafka-manager
+    restart: always
+    container_name: kafka-manager
+    hostname: kafka-manager
+    ports:
+    - 9000:9000
+    links:
+    - kafka1
+    - kafka2
+    - kafka3
+    - zoo1
+    - zoo2
+    - zoo3
+    environment:
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_BROKERS: kafka1:9092,kafka2:9093,kafka3:9094
+      APPLICATION_SECRET: letmein
+      KAFKA_MANAGER_AUTH_ENABLED: "true" # 开启验证
+      KAFKA_MANAGER_USERNAME: "admin" # 用户名
+      KAFKA_MANAGER_PASSWORD: "admin" # 密码
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+    networks:
+      default:
+        ipv4_address: 172.23.0.10
+
+networks:
+  default:
+    external:
+      name: zookeeper_network
