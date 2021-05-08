@@ -1,0 +1,58 @@
+docker exec -it redis7001 redis-cli -p 7001 -a 123456 --cluster create 192.168.15.208:7001 192.168.15.208:7002 192.168.15.208:7003 192.168.15.208:7004 192.168.15.208:7005 192.168.15.208:7006 --cluster-replicas 1
+
+docker exec -it redis7001 redis-cli -p 7001  --cluster create 192.168.15.208:7001 192.168.15.208:7002 192.168.15.208:7003 192.168.15.208:7004 192.168.15.208:7005 192.168.15.208:7006 --cluster-replicas 1
+
+
+firewall-cmd --zone=public --add-port=7001/tcp --permanent
+firewall-cmd --zone=public --add-port=7002/tcp --permanent
+firewall-cmd --zone=public --add-port=7003/tcp --permanent
+firewall-cmd --zone=public --add-port=7004/tcp --permanent
+firewall-cmd --zone=public --add-port=7005/tcp --permanent
+firewall-cmd --zone=public --add-port=7006/tcp --permanent
+
+firewall-cmd --zone=public --add-port=17001/tcp --permanent
+firewall-cmd --zone=public --add-port=17002/tcp --permanent
+firewall-cmd --zone=public --add-port=17003/tcp --permanent
+firewall-cmd --zone=public --add-port=17004/tcp --permanent
+firewall-cmd --zone=public --add-port=17005/tcp --permanent
+firewall-cmd --zone=public --add-port=17006/tcp --permanent
+
+
+
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.15.208 -p 7005  ping
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+PONG
+
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.15.208 -p 7003 -a 123456
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+192.168.124.5:7003> set name admin
+(error) MOVED 5798 192.168.124.5:7002
+
+
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.15.208 -p 7003 -c
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+192.168.124.5:7003> set name admin
+-> Redirected to slot [5798] located at 192.168.124.5:7002
+OK
+192.168.124.5:7002> get name
+"admin"
+192.168.124.5:7002>
+
+
+➜  docker docker exec -it redis7001 bash
+root@cbc6e76a3ed2:/data# redis-benchmark -h 192.168.15.208 -p 7001 -t set -c 100 -n 50000 -d 20
+====== SET ======
+  50000 requests completed in 10.65 seconds
+  100 parallel clients
+  20 bytes payload
+  keep alive: 1
+
+0.00% <= 2 milliseconds
+0.01% <= 3 milliseconds
+...
+100.00% <= 48 milliseconds
+100.00% <= 49 milliseconds
+4692.63 requests per second
