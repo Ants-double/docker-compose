@@ -9,13 +9,14 @@ services:
     hostname: zoo1
     ports:
     - "2181:2181"
+    - "3080:8080"
     volumes:
-    - "./zooConfig/zoo.cfg:/conf/zoo.cfg" # 配置
-    - "/home/ants/dev/zk/zookeeper1/data:/data"
-    - "/home/ants/dev/zk/zookeeper1/datalog:/datalog"
+    - "./zookeeper/zooConfig/conf/zoo.cfg:/conf/zoo.cfg" # 配置
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper1/data:/data"
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper1/datalog:/datalog"
     environment:
       ZOO_MY_ID: 1 # id
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
     networks:
       default:
         ipv4_address: 172.23.0.11
@@ -27,13 +28,14 @@ services:
     hostname: zoo2
     ports:
     - "2182:2181"
+    - "3081:8080"
     volumes:
-    - "./zooConfig/zoo.cfg:/conf/zoo.cfg"
-    - "/home/ants/dev/zk/zookeeper2/data:/data"
-    - "/home/ants/dev/zk/zookeeper2/datalog:/datalog"
+    - "./zookeeper/zooConfig/conf/zoo.cfg:/conf/zoo.cfg"
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper2/data:/data"
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper2/datalog:/datalog"
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
     networks:
       default:
         ipv4_address: 172.23.0.12
@@ -44,14 +46,15 @@ services:
     container_name: zoo3
     hostname: zoo3
     ports:
-    - "2183:2181"
+    - "2183:2181"  
+    - "3082:8080"  
     volumes:
-    - "./zooConfig/zoo.cfg:/conf/zoo.cfg"
-    - "/home/ants/dev/zk/zookeeper3/data:/data"
-    - "/home/ants/dev/zk/zookeeper3/datalog:/datalog"
+    - "./zookeeper/zooConfig/conf/zoo.cfg:/conf/zoo.cfg"
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper3/data:/data"
+    - "/home/lyy/docker_shell/kafka/zookeeper/zookeeper3/datalog:/datalog"
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
     networks:
       default:
         ipv4_address: 172.23.0.13
@@ -65,7 +68,7 @@ services:
     - 9092:9092
     # - 9988:9988
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.15.207:9092 # 暴露在外的地址
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.3.13:9092 # 暴露在外的地址
       KAFKA_ADVERTISED_HOST_NAME: kafka1 # 
       KAFKA_HOST_NAME: kafka1
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
@@ -75,7 +78,7 @@ services:
     #  JMX_PORT: 9988 # jmx
     volumes:
     - /etc/localtime:/etc/localtime
-    - "/home/ants/dev/mq/kafka1/logs:/kafka"
+    - "/home/lyy/docker_shell/kafka/kafka1/logs:/kafka"
     links:
     - zoo1
     - zoo2
@@ -103,7 +106,7 @@ services:
      # JMX_PORT: 9998
     volumes:
     - /etc/localtime:/etc/localtime
-    - "/home/ants/dev/mq/kafka2/logs:/kafka"
+    - "/home/lyy/docker_shell/kafka/kafka2/logs:/kafka"
     links:
     - zoo1
     - zoo2
@@ -131,7 +134,7 @@ services:
       #JMX_PORT: 9997
     volumes:
     - /etc/localtime:/etc/localtime
-    - "/home/ants/dev/mq/kafka3/logs:/kafka"
+    - "/home/lyy/docker_shell/kafka/kafka3/logs:/kafka"
     links:
     - zoo1
     - zoo2

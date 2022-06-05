@@ -15,6 +15,9 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.171
 
 
   redis7002:
@@ -31,6 +34,9 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.172
 
 
   redis7003:
@@ -47,6 +53,9 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.173
 
 
   redis7004:
@@ -63,6 +72,9 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.174
 
 
   redis7005:
@@ -79,6 +91,9 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.175
 
 
   redis7006:
@@ -95,3 +110,11 @@ services:
     environment:
       # 设置时区为上海，否则时间会有问题
       - TZ=Asia/Shanghai
+    networks:
+      default:
+        ipv4_address: 172.23.0.176
+
+networks:
+  default:
+    external:
+      name: zookeeper_network

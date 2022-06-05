@@ -3,18 +3,16 @@ services:
     web:
       image: 'gitlab/gitlab-ce:latest'
       container_name: gitlab
-      restart: always
-      hostname: '119.45.7.127'
-      environment:
+      hostname: '192.168.3.13'
+      environment:        
         GITLAB_OMNIBUS_CONFIG: |
-          external_url 'http://119.45.7.127:8929'
+          external_url 'http://192.168.3.13:8929'
           gitlab_rails['gitlab_shell_ssh_port'] = 2224
-         
       ports:
         - '8929:8929'
         - '2224:22'
       volumes:
-        - './config:/etc/gitlab'
-        - './logs:/var/log/gitlab'
-        - './data:/var/opt/gitlab'
+        - '/home/lyy/docker_shell/gitlab/config:/etc/gitlab'
+        - '/home/lyy/docker_shell/gitlab/logs:/var/log/gitlab'
+        - '/home/lyy/docker_shell/gitlab/data:/var/opt/gitlab'
      
